@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  telegram_messages_sender:
+    image: qmbo/telegram_messages_sender
+    container_name: telegram_messages_sender
+    environment:
+      - TELEGRAM_BOT_TOKEN=!!!!Past telegram bot token her!!!!
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=telegram_messages_sender_broker:49150
+    depends_on:
+      - telegram_messages_sender_broker
+    restart: always
+
+  telegram_messages_sender_zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: telegram_messages_sender_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    restart: always
+
+  telegram_messages_sender_broker:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: telegram_messages_sender_broker
+    ports:
+      - "49150:9092"
+    depends_on:
+      - telegram_messages_sender_zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'telegram_messages_sender_zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://telegram_messages_sender_broker:49150
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    restart: always
+
+networks:
+  default:
+    driver: bridge
+    name: telegram_messages_sender_net
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.20/25
