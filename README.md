@@ -13,14 +13,18 @@ If your application will run at docker compose. Make sure you have added the net
 networks:
   default:
     external:
-      name: telegram_messages_sender_net
+      name: telegram_messages_sender_net 
 ```
 #### Default settings Kafka server:
 * Group-id: `telegram.broadcast`
-* Topic: `telegram_messages`
+* Topic: `telegram_messages_dto`
+* JsonSerializer.TYPE_MAPPINGS name mapping set to `dto`
 
 #### Kafka message format
 
-``
-telegramChatId_message
-``
+```json
+{
+  "chatId": 3887778,
+  "message": "Message"
+}
+```

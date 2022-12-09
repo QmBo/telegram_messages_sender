@@ -5,6 +5,7 @@ import lombok.val;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
+import ru.qmbo.telegram_messages_sender.dto.Message;
 import ru.qmbo.telegram_messages_sender.service.MessagesService;
 
 /**
@@ -33,8 +34,8 @@ public class KafkaConsumerController {
      *
      * @param input the input
      */
-    @KafkaListener(topics = {"${kafka.topi}"})
-    public void getMessage(ConsumerRecord<Integer, String> input) {
+    @KafkaListener(topics = {"${kafka.topic.dto}"})
+    public void getMessageDTO(ConsumerRecord<Integer, Message> input) {
         final val inputMessage = input.value();
         log.debug("Has new message from Kafka: {}", inputMessage);
         this.messagesService.putNewMessage(inputMessage);
