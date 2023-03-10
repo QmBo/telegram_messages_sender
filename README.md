@@ -1,7 +1,7 @@
 # Broadcast messages from Kafka Telegram Bot
 Service get message from Kafka and send it to user by chat id.
 
-# How it start
+# How it starts
 1. Download _docker-compose.yml_ file.
 2. Create bot or get Telegram bot API token. Use [@BotFather](https://t.me/BotFather)
 3. Insert Telegram bot API token in _docker-compose.yml_.
@@ -28,3 +28,8 @@ networks:
   "message": "Message"
 }
 ```
+# Commands
+
+- `/subscribe` - subscribe on broadcast.
+- `/unsubscribe` - unsubscribe from broadcast.
+- `/sendall` - send message to all users.
