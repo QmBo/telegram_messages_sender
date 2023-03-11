@@ -84,6 +84,7 @@ public class TelegramBotMessages {
     public void requestParser(Update update) {
         Message message = update.message();
         if (message != null) {
+            log.info("New message: {}", message.text());
             if (message.text().startsWith("/")) {
                 this.doCommand(update);
             } else {
@@ -108,28 +109,31 @@ public class TelegramBotMessages {
             this.restService.sendRequest(format(SUBSCRIBE_TEMPLATE_URL, host, message.chat().id()));
         } else if (UNSUBSCRIBE.equals(message.text())) {
             this.restService.sendRequest(format(UNSUBSCRIBE_TEMPLATE_URL, host, message.chat().id()));
-        } else if (message.text().startsWith(SEND_ALL) && message.chat().id().equals(this.adminChatId)) {
-            this.restService.sendRequest(GET_ALL_USERS_TEMPLATE_URL)
-                    .ifPresent(stringResponseEntity -> this.sentToAll(stringResponseEntity, message));
+//        } else if (message.text().startsWith(SEND_ALL) && message.chat().id().equals(this.adminChatId)) {
+//            this.restService.sendRequest(format(GET_ALL_USERS_TEMPLATE_URL, host))
+//                    .ifPresent(stringResponseEntity -> this.sentToAll(stringResponseEntity, message));
         } else {
             this.messageSend(message.chat().id(), "Такой команды нет!");
+            log.info("Uncorrected command.");
         }
     }
 
-    private void sentToAll(ResponseEntity<String> stringResponseEntity, Message message) {
-        String textMessage = message.text().replace(SEND_ALL, "");
-        if (stringResponseEntity.getStatusCode().equals(HttpStatus.OK) && stringResponseEntity.getBody() != null
-                && !stringResponseEntity.getBody().isEmpty()) {
-            try {
-                Arrays.stream(stringResponseEntity.getBody().split(","))
-                        .forEach(chatId -> this.messageSend(Long.parseLong(chatId), textMessage));
-            } catch (NumberFormatException e) {
-                log.error("Response Entity contain bad data: {}\n{}", stringResponseEntity.getBody(), e.getMessage());
-            }
-        } else {
-            log.warn("Response code not 200: {}", stringResponseEntity.toString());
-        }
-    }
+//    private void sentToAll(ResponseEntity<String> stringResponseEntity, Message message) {
+//        String textMessage = message.text().replace(SEND_ALL, "");
+//        log.info("Try to send to all the message: {}", textMessage);
+//        if (stringResponseEntity.getStatusCode().equals(HttpStatus.OK) && stringResponseEntity.getBody() != null
+//                && !stringResponseEntity.getBody().isEmpty()) {
+//            try {
+//                Arrays.stream(stringResponseEntity.getBody().split(","))
+//                        .forEach(chatId -> this.messageSend(Long.parseLong(chatId), textMessage));
+//                log.info("Messages send.");
+//            } catch (NumberFormatException e) {
+//                log.error("Response Entity contain bad data: {}\n{}", stringResponseEntity.getBody(), e.getMessage());
+//            }
+//        } else {
+//            log.warn("Response code not 200: {}", stringResponseEntity.toString());
+//        }
+//    }
 
 
 }

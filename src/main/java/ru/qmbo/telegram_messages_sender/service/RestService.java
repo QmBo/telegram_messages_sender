@@ -16,10 +16,12 @@ public class RestService {
     public static final String GET_ALL_USERS_TEMPLATE_URL = "%s/users/getAll";
 
     Optional<ResponseEntity<String>> sendRequest(String uri) {
+        log.info("Try to send request: {}", uri);
         ResponseEntity<String> response = null;
         RestTemplate rt = new RestTemplate();
         try {
             response = rt.getForEntity(uri, String.class);
+            log.info("Response: {}", response.toString());
         } catch (Exception e) {
             log.error("REST Template fail: {}", e.getMessage());
             log.error("Uri is: {}", uri);

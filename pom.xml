@@ -12,7 +12,7 @@
 	<artifactId>telegram_messages_sender</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>telegram_messages_sender</name>
-	<description>Telgram messages sender.</description>
+	<description>Telegram messages sender.</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

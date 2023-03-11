@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   telegram_messages_sender:
-    image: qmbo/telegram_messages_sender:0.0.3
+    image: qmbo/telegram_messages_sender:0.0.5_2
     container_name: telegram_messages_sender
     environment:
       - TELEGRAM_BOT_TOKEN=!!!!Past telegram bot token her!!!!
