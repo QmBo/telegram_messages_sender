@@ -32,5 +32,6 @@ networks:
 
 - `/subscribe` - subscribe on broadcast.
 - `/unsubscribe` - unsubscribe from broadcast.
+- `/statistic` - sens users statistic to admin.
 
 [//]: # (- `/sendall` - send message to all users.)

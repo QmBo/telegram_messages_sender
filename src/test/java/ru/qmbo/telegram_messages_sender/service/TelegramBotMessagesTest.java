@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -30,15 +29,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static ru.qmbo.telegram_messages_sender.service.TelegramBotMessages.SORRY;
 import static ru.qmbo.telegram_messages_sender.service.TelegramBotMessages.WRONG_COMMAND;
 
@@ -228,6 +223,32 @@ class TelegramBotMessagesTest {
         );
         assertThat((messageArgumentCaptor.getValue().getParameters()).get("chat_id")).isEqualTo(99998888L);
         assertThat((messageArgumentCaptor.getValue().getParameters()).get("text")).isEqualTo(SORRY);
+    }
+
+    @Test
+    public void whetCommandStatisticFromAdminThenSendStatisticRequest() {
+        when(message.text()).thenReturn("/statistic");
+        when(chat.id()).thenReturn(303775921L);
+        when(message.chat()).thenReturn(chat);
+        when(update.message()).thenReturn(message);
+        telegramBotMessages.requestParser(update);
+        verify(restService, times(1)).sendStatisticRequest();
+    }
+
+    @Test
+    public void whetCommandStatisticFromUserThenWrongCommandMessage() {
+        when(message.text()).thenReturn("/statistic");
+        when(chat.id()).thenReturn(9900L);
+        when(message.chat()).thenReturn(chat);
+        when(update.message()).thenReturn(message);
+        telegramBotMessages.requestParser(update);
+        verify(restService, times(0)).sendStatisticRequest();
+        verify(bot).execute(
+                messageArgumentCaptor.capture()
+        );
+        assertThat((messageArgumentCaptor.getValue().getParameters()).get("chat_id")).isEqualTo(9900L);
+        assertThat((messageArgumentCaptor.getValue().getParameters()).get("text")).isEqualTo(WRONG_COMMAND);
+
     }
 
 }

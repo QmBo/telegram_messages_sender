@@ -14,11 +14,11 @@ import static java.lang.String.format;
 @Log4j2
 public class RestService {
     public final String host;
-    public static final String CALC_TEMPLATE_URL = "%s/calc?chatId=%s&amount=%s";
     public static final String CALC_TEMPLATE_URL_WITH_CURRENCY = "%s/calc?chatId=%s&amount=%s&currency=%s";
     public static final String SUBSCRIBE_TEMPLATE_URL = "%s/users/add?chatId=%s";
     public static final String UNSUBSCRIBE_TEMPLATE_URL = "%s/users/dell?chatId=%s";
-    public static final String GET_ALL_USERS_TEMPLATE_URL = "%s/users/getAll";
+//    public static final String GET_ALL_USERS_TEMPLATE_URL = "%s/users/getAll";
+    public static final String STATISTIC_TEMPLATE_URL = "%s/users/stats";
 
     public RestService(@Value("${mir.calc.host}") String host) {
         this.host = host;
@@ -48,5 +48,9 @@ public class RestService {
 
     Optional<ResponseEntity<String>> sendUnsubscribeRequest(long chatId) {
         return this.sendRequest(format(UNSUBSCRIBE_TEMPLATE_URL, host, chatId));
+    }
+
+    Optional<ResponseEntity<String>> sendStatisticRequest() {
+        return this.sendRequest(format(STATISTIC_TEMPLATE_URL, host));
     }
 }

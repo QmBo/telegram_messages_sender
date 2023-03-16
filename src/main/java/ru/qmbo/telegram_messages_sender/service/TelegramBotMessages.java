@@ -34,8 +34,9 @@ public class TelegramBotMessages {
 
     public static final String SUBSCRIBE = "/subscribe";
     public static final String UNSUBSCRIBE = "/unsubscribe";
-    public static final String SEND_ALL = "/sendall ";
-    public static final String SORRY = "\uD83E\uDD14 Не могу разобрать, что ты от меня хочешь? Попробуй отправить целое число и я переведу его в рубли по курсу на снятия с карты мир ВТБ В банкомате. \uD83E\uDD11 А если хочешь можешь отправить мне сумму и валюту. Например: \"100 р\". Тогда я подскажу эквивалент этой суммы в тенге. \uD83D\uDE09";
+    public static final String STASTISTIC = "/statistic";
+//    public static final String SEND_ALL = "/sendall ";
+    public static final String SORRY = "\uD83E\uDD14 Не могу разобрать, что ты от меня хочешь? Попробуй отправить целое число и я переведу его в рубли по курсу снятия с карты МИР в банкомате ВТБ. \uD83E\uDD11 А если хочешь, можешь отправить мне сумму и валюту. Например: \"100 р\". Тогда я подскажу эквивалент этой суммы в тенге. \uD83D\uDE09";
     public static final String AMOUNT = "amount";
     public static final String WRONG_COMMAND = "Такой команды нет!";
     private final Long adminChatId;
@@ -148,6 +149,8 @@ public class TelegramBotMessages {
             this.restService.sendSubscribeRequest(message.chat().id());
         } else if (UNSUBSCRIBE.equals(message.text())) {
             this.restService.sendUnsubscribeRequest(message.chat().id());
+        } else if (STASTISTIC.equals(message.text()) && message.chat().id().equals(this.adminChatId)) {
+            this.restService.sendStatisticRequest();
 //        } else if (message.text().startsWith(SEND_ALL) && message.chat().id().equals(this.adminChatId)) {
 //            this.restService.sendRequest(format(GET_ALL_USERS_TEMPLATE_URL, host))
 //                    .ifPresent(stringResponseEntity -> this.sentToAll(stringResponseEntity, message));
