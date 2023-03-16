@@ -9,7 +9,7 @@ Service get message from Kafka and send it to user by chat id.
 
 # Connect to Kafka
 If your application will run at docker compose. Make sure you have added the network settings as follows:
-```dockerfile
+```docker
 networks:
   default:
     external:
@@ -32,4 +32,5 @@ networks:
 
 - `/subscribe` - subscribe on broadcast.
 - `/unsubscribe` - unsubscribe from broadcast.
-- `/sendall` - send message to all users.
+
+[//]: # (- `/sendall` - send message to all users.)
