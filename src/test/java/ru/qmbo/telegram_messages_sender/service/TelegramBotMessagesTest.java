@@ -101,6 +101,8 @@ class TelegramBotMessagesTest {
 
     @MockBean
     private RestService restService;
+    @MockBean
+    private RabbitMQService requestService;
 
     @MockBean
     private TelegramBot bot;
@@ -164,7 +166,7 @@ class TelegramBotMessagesTest {
         when(message.chat()).thenReturn(chat);
         when(update.message()).thenReturn(message);
         telegramBotMessages.requestParser(update);
-        verify(restService).sendSubscribeRequest(
+        verify(requestService).sendSubscribeRequest(
                 longArgumentCaptor.capture()
         );
         assertThat(longArgumentCaptor.getValue()).isEqualTo(99998888L);
@@ -177,7 +179,7 @@ class TelegramBotMessagesTest {
         when(message.chat()).thenReturn(chat);
         when(update.message()).thenReturn(message);
         telegramBotMessages.requestParser(update);
-        verify(restService).sendUnsubscribeRequest(
+        verify(requestService).sendUnsubscribeRequest(
                 longArgumentCaptor.capture()
         );
         assertThat(longArgumentCaptor.getValue()).isEqualTo(99998888L);
@@ -232,7 +234,7 @@ class TelegramBotMessagesTest {
         when(message.chat()).thenReturn(chat);
         when(update.message()).thenReturn(message);
         telegramBotMessages.requestParser(update);
-        verify(restService, times(1)).sendStatisticRequest();
+        verify(requestService, times(1)).sendStatisticRequest(message.chat().id());
     }
 
     @Test
@@ -242,7 +244,7 @@ class TelegramBotMessagesTest {
         when(message.chat()).thenReturn(chat);
         when(update.message()).thenReturn(message);
         telegramBotMessages.requestParser(update);
-        verify(restService, times(0)).sendStatisticRequest();
+        verify(requestService, times(0)).sendStatisticRequest(message.chat().id());
         verify(bot).execute(
                 messageArgumentCaptor.capture()
         );

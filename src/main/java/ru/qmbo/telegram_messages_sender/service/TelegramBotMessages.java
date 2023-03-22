@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -29,7 +30,9 @@ import static ru.qmbo.telegram_messages_sender.unit.Currency.TENGE;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class TelegramBotMessages {
+
     public static final String CURRENCY = "currency";
 
     public static final String SUBSCRIBE = "/subscribe";
@@ -39,24 +42,12 @@ public class TelegramBotMessages {
     public static final String SORRY = "\uD83E\uDD14 Не могу разобрать, что ты от меня хочешь? Попробуй отправить целое число и я переведу его в рубли по курсу снятия с карты МИР в банкомате ВТБ. \uD83E\uDD11 А если хочешь, можешь отправить мне сумму и валюту. Например: \"100 р\". Тогда я подскажу эквивалент этой суммы в тенге. \uD83D\uDE09";
     public static final String AMOUNT = "amount";
     public static final String WRONG_COMMAND = "Такой команды нет!";
-    private final Long adminChatId;
+    @Value("${telegram.admin.chat-id}")
+    private Long adminChatId;
     private final TelegramBot bot;
-
+    private final RequestService requestService;
     private final RestService restService;
 
-    /**
-     * Instantiates a new Telegram bot messages.
-     *
-     * @param adminChatId admin chat id
-     * @param bot         the bot
-     * @param restService the broadcast
-     */
-    public TelegramBotMessages(@Value("${telegram.admin.chat-id}") Long adminChatId, TelegramBot bot,
-                               RestService restService) {
-        this.adminChatId = adminChatId;
-        this.bot = bot;
-        this.restService = restService;
-    }
 
     /**
      * Message send.
@@ -88,6 +79,7 @@ public class TelegramBotMessages {
         Message message = update.message();
         if (message != null && message.text() != null) {
             log.info("New message: {}", message.text());
+            this.requestService.sendCollectUserRequest(message);
             if (message.text().startsWith("/")) {
                 this.doCommand(update);
             } else {
@@ -145,17 +137,18 @@ public class TelegramBotMessages {
 
     private void doCommand(Update update) {
         Message message = update.message();
+        final Long chatId = message.chat().id();
         if (SUBSCRIBE.equals(message.text())) {
-            this.restService.sendSubscribeRequest(message.chat().id());
+            this.requestService.sendSubscribeRequest(chatId);
         } else if (UNSUBSCRIBE.equals(message.text())) {
-            this.restService.sendUnsubscribeRequest(message.chat().id());
-        } else if (STASTISTIC.equals(message.text()) && message.chat().id().equals(this.adminChatId)) {
-            this.restService.sendStatisticRequest();
+            this.requestService.sendUnsubscribeRequest(chatId);
+        } else if (STASTISTIC.equals(message.text()) && chatId.equals(this.adminChatId)) {
+            this.requestService.sendStatisticRequest(chatId);
 //        } else if (message.text().startsWith(SEND_ALL) && message.chat().id().equals(this.adminChatId)) {
 //            this.restService.sendRequest(format(GET_ALL_USERS_TEMPLATE_URL, host))
 //                    .ifPresent(stringResponseEntity -> this.sentToAll(stringResponseEntity, message));
         } else {
-            this.messageSend(message.chat().id(), WRONG_COMMAND);
+            this.messageSend(chatId, WRONG_COMMAND);
             log.info("Uncorrected command.");
         }
     }

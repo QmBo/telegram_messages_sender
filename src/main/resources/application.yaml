@@ -1,0 +1,50 @@
+telegram:
+  bot:
+    token: token
+  admin:
+    chat-id: 303775921
+
+spring:
+  kafka:
+    consumer:
+      group-id: telegram.broadcast
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: ru.qmbo
+    bootstrap-servers: localhost:9092
+kafka:
+  topic:
+    string: telegram_messages
+    dto: telegram_messages_dto
+
+mir:
+  calc:
+    host: http://localhost:49007
+
+rabbit:
+  queue:
+    input:
+      collect: users-service-collect-user
+      subscribe: users-service-subscribe
+      unsubscribe: users-service-unsubscribe
+      statistic: users-service-statistic
+      getAllUsers: users-service-get-all-users
+    output:
+      getAllUsers: users-service-get-all-users-answer
+  exchangeTopic: users-service
+  key:
+    collect: users.collect.one
+    subscribe: users.subscribe.one
+    unsubscribe: users.unsubscribe.one
+    statistic: users.statistic.one
+    getAllUsers: users.getAllUsers.one
+  routing:
+    binding:
+      collect: users.collect.#
+      subscribe: users.subscribe.#
+      unsubscribe: users.unsubscribe.#
+      statistic: users.statistic.#
+      getAllUsers: users.getAllUsers.#
+      getAllUsersAnswer: users.getAllUsersAnswer.#

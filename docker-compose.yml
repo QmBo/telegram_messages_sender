@@ -4,6 +4,7 @@ services:
     image: qmbo/telegram_messages_sender:0.0.5_2
     container_name: telegram_messages_sender
     environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq_mir_exchange
       - TELEGRAM_BOT_TOKEN=!!!!Past telegram bot token her!!!!
       - MIR_CALC_HOST=http://172.28.0.30:49007
       - SPRING_KAFKA_BOOTSTRAP-SERVERS=telegram_messages_sender_broker:49150
